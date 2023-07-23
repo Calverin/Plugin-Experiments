@@ -1,15 +1,19 @@
 package com.calverin.crutils;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerSwapHandItemsEvent;
+import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.calverin.crutils.Commands.CommandDND;
@@ -59,4 +63,42 @@ public class CRUtils extends JavaPlugin implements Listener {
         }
         event.setMessage(msg);
     }
+
+    @EventHandler
+    public void onPlayerRightClickEntity(PlayerInteractEntityEvent event) {
+        // Player stacking
+        Player player = event.getPlayer();
+        if (event.getRightClicked() instanceof Player) {
+            Player clicked = (Player) event.getRightClicked();
+            player.addPassenger(clicked);
+        }
+    }
+
+    @EventHandler
+    public void onPlayerOffhand(final PlayerSwapHandItemsEvent event) throws InterruptedException {
+        // Player throwing
+        final Player player = event.getPlayer();
+        if (player.getPassengers().size() > 0) {
+            final Entity passenger = player.getPassengers().get(0);
+            Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable(){
+                public void run(){
+                    passenger.setVelocity(player.getEyeLocation().getDirection().multiply(2.0));
+                }
+            }, 2L);
+            player.removePassenger(passenger);
+        }
+    }
+
+    //@EventHandler
+    //public void onPlayerDismount(VehicleExitEvent event) {
+    //    // Player dismounting
+    //    if (event.getExited() instanceof Player) {
+    //        Player player = (Player) event.getExited();
+    //        if (event.getVehicle() instanceof Player) {
+    //            Player vehicle = (Player) event.getVehicle();
+    //            player.setVelocity(vehicle.getEyeLocation().getDirection().multiply(10.0));
+    //            getServer().broadcastMessage(player.getEyeLocation().getDirection().multiply(10.0).toString());
+    //        }
+    //    }
+    //}
 }
