@@ -1,0 +1,20 @@
+name: CRUtilities
+version: 0.0.1
+main: com.calverin.crutils.CRUtils
+description: A plugin with utlity stuff for Command Realm
+author: Calverin
+website: https://calverin.com
+api-version: '1.20'
+commands:
+   see:
+      description: Toggles night vision for the executing player
+      usage: /see
+      permission: crutils.yourcommandpermission
+   dnd:
+      description: Toggles do not disturb mode for the executing player to prevent ping alerts
+      usage: /dnd or /donotdisturb
+      permission: crutils.yourcommandpermission
+   donotdisturb:
+      description: Toggles do not disturb mode for the executing player to prevent ping alerts
+      usage: /dnd or /donotdisturb
+      permission: crutils.yourcommandpermission
