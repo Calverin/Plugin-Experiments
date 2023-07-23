@@ -18,3 +18,7 @@ commands:
       description: Toggles do not disturb mode for the executing player to prevent ping alerts
       usage: /dnd or /donotdisturb
       permission: crutils.yourcommandpermission
+   stacking:
+      description: Enables, disables, or limits the entities that a player can carry (or stack)
+      usage: /stacking [on|off|players|mobs]
+      permission: crutils.yourcommandpermission

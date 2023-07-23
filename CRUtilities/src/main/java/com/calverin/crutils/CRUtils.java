@@ -13,15 +13,17 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
-import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.calverin.crutils.Commands.CommandDND;
 import com.calverin.crutils.Commands.CommandSee;
+import com.calverin.crutils.Commands.CommandStacking;
+import com.calverin.crutils.Commands.CommandStacking.StackRule;
 
 public class CRUtils extends JavaPlugin implements Listener {
 
     protected static Set<Player> doNotDisturb = new HashSet<>();
+    protected StackRule stacking = StackRule.OFF;
 
     @Override
     public void onEnable() {
@@ -30,6 +32,7 @@ public class CRUtils extends JavaPlugin implements Listener {
         this.getCommand("see").setExecutor(new CommandSee());
         this.getCommand("donotdisturb").setExecutor(new CommandDND(doNotDisturb));
         this.getCommand("dnd").setExecutor(new CommandDND(doNotDisturb));
+        this.getCommand("stacking").setExecutor(new CommandStacking());
     }
 
     @Override
@@ -66,39 +69,35 @@ public class CRUtils extends JavaPlugin implements Listener {
 
     @EventHandler
     public void onPlayerRightClickEntity(PlayerInteractEntityEvent event) {
-        // Player stacking
+        // Player/entity stacking
         Player player = event.getPlayer();
-        if (event.getRightClicked() instanceof Player) {
-            Player clicked = (Player) event.getRightClicked();
+        //getServer().broadcastMessage(stacking.toString());
+        if (!((stacking == StackRule.PLAYERS) && !(event.getRightClicked() instanceof Player)) && !((stacking == StackRule.MOBS) && (event.getRightClicked() instanceof Player)) && !(stacking == StackRule.OFF)) {
+            Entity clicked = event.getRightClicked();
             player.addPassenger(clicked);
         }
     }
 
     @EventHandler
     public void onPlayerOffhand(final PlayerSwapHandItemsEvent event) throws InterruptedException {
-        // Player throwing
+        // Player/entity throwing
         final Player player = event.getPlayer();
         if (player.getPassengers().size() > 0) {
             final Entity passenger = player.getPassengers().get(0);
             Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable(){
                 public void run(){
-                    passenger.setVelocity(player.getEyeLocation().getDirection().multiply(2.0));
+                    passenger.setVelocity(player.getEyeLocation().getDirection().multiply(1.5));
                 }
             }, 2L);
             player.removePassenger(passenger);
         }
     }
 
-    //@EventHandler
-    //public void onPlayerDismount(VehicleExitEvent event) {
-    //    // Player dismounting
-    //    if (event.getExited() instanceof Player) {
-    //        Player player = (Player) event.getExited();
-    //        if (event.getVehicle() instanceof Player) {
-    //            Player vehicle = (Player) event.getVehicle();
-    //            player.setVelocity(vehicle.getEyeLocation().getDirection().multiply(10.0));
-    //            getServer().broadcastMessage(player.getEyeLocation().getDirection().multiply(10.0).toString());
-    //        }
-    //    }
-    //}
+    public void setStackingRule(StackRule stackRule) {
+        stacking = stackRule;
+    }
+
+    public StackRule getStackingRule() {
+        return stacking;
+    }
 }
