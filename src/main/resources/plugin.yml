@@ -1,0 +1,7 @@
+name: PingMe
+version: 0.0.1
+main: com.calverin.pingme.PingMe
+description: A plugin for pinging your friends in chat
+author: Calverin
+website: https://calverin.com
+api-version: '1.20'
