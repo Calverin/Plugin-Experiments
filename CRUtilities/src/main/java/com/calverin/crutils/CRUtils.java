@@ -20,6 +20,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
 import com.calverin.crutils.Commands.CommandDND;
+import com.calverin.crutils.Commands.CommandMimic;
+import com.calverin.crutils.Commands.CommandName;
 import com.calverin.crutils.Commands.CommandSee;
 import com.calverin.crutils.Commands.CommandStacking;
 import com.calverin.crutils.Commands.CommandStacking.StackRule;
@@ -37,6 +39,8 @@ public class CRUtils extends JavaPlugin implements Listener {
         this.getCommand("donotdisturb").setExecutor(new CommandDND(doNotDisturb));
         this.getCommand("dnd").setExecutor(new CommandDND(doNotDisturb));
         this.getCommand("stacking").setExecutor(new CommandStacking());
+        this.getCommand("name").setExecutor(new CommandName());
+        this.getCommand("mimic").setExecutor(new CommandMimic());
     }
 
     @Override
@@ -71,30 +75,30 @@ public class CRUtils extends JavaPlugin implements Listener {
         }
 
         // Emojis
-        msg = msg.replaceAll(":\\)", "§e🙂§r");
-        msg = msg.replaceAll(":\\(", "§e😞§r");
-        msg = msg.replaceAll(":D", "§e😃§r");
-        msg = msg.replaceAll(":P", "§e😝§r");
-        msg = msg.replaceAll(":p", "§e😛§r");
-        msg = msg.replaceAll(":O", "§e😱§r");
-        msg = msg.replaceAll(":o", "§e😮§r");
-        msg = msg.replaceAll(":\\|", "§e😐§r");
-        msg = msg.replaceAll(":\\/", "§e😕§r");
-        msg = msg.replaceAll(":\\*", "§e😘§r");
-        msg = msg.replaceAll(":\\$", "§e🤑§r");
-        msg = msg.replaceAll("B\\)", "§e😎§r");
-        msg = msg.replaceAll(":eyes:", "👀");
-        msg = msg.replaceAll(":eye:", "👁");
-        msg = msg.replaceAll(":lips:", "👄");
-        msg = msg.replaceAll(":rofl:", "🤣");
-        msg = msg.replaceAll("\\<3", "§c❤§r");
-        msg = msg.replaceAll("o\\/", "👋");
-        msg = msg.replaceAll("\\;-\\;", "ಥ_ಥ");
-        msg = msg.replaceAll("o_o", "ಠ_ಠ");
-        msg = msg.replaceAll(":flip:", "(╯°□°）╯︵ ┻━┻");
-        msg = msg.replaceAll(":unflip:", "┬─┬ ノ( ゜-゜ノ)");
-        msg = msg.replaceAll(":shrug:", "¯\\\\_(ツ)_/¯");
-        msg = msg.replaceAll(":gib:", "༼ つ ◕_◕ ༽つ");
+        msg = msg.replaceAll("::\\)", "§e🙂§r");
+        msg = msg.replaceAll("::\\(", "§e😞§r");
+        msg = msg.replaceAll("::D", "§e😃§r");
+        msg = msg.replaceAll("::P", "§e😝§r");
+        msg = msg.replaceAll("::p", "§e😛§r");
+        msg = msg.replaceAll("::O", "§e😱§r");
+        msg = msg.replaceAll("::o", "§e😮§r");
+        msg = msg.replaceAll("::\\|", "§e😐§r");
+        msg = msg.replaceAll("::\\/", "§e😕§r");
+        msg = msg.replaceAll("::\\*", "§e😘§r");
+        msg = msg.replaceAll("::\\$", "§e🤑§r");
+        msg = msg.replaceAll("::B\\)", "§e😎§r");
+        msg = msg.replaceAll("::eyes", "👀");
+        msg = msg.replaceAll("::eye", "👁");
+        msg = msg.replaceAll("::lips", "👄");
+        msg = msg.replaceAll("::rofl", "🤣");
+        msg = msg.replaceAll("::\\<3", "§c❤§r");
+        msg = msg.replaceAll("::o\\/", "👋");
+        msg = msg.replaceAll("::\\;-\\;", "ಥ_ಥ");
+        msg = msg.replaceAll("::o_o", "ಠ_ಠ");
+        msg = msg.replaceAll("::flip", "(╯°□°）╯︵ ┻━┻");
+        msg = msg.replaceAll("::unflip", "┬─┬ ノ( ゜-゜ノ)");
+        msg = msg.replaceAll("::shrug", "¯\\\\_(ツ)_/¯");
+        msg = msg.replaceAll("::gib", "༼ つ ◕_◕ ༽つ");
 
         event.setMessage(msg);
     }

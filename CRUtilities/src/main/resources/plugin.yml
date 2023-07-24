@@ -22,3 +22,11 @@ commands:
       description: Enables, disables, or limits the entities that a player can carry (or stack)
       usage: /stacking [on|off|players|mobs]
       permission: crutils.yourcommandpermission
+   name:
+      description: Sets the name of the item in the player's hand
+      usage: /name <name>
+      permission: crutils.yourcommandpermission
+   mimic:
+      description: Mimics the name of another player
+      usage: /mimic <player>
+      permission: crutils.yourcommandpermission
