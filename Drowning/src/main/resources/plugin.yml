@@ -1,0 +1,7 @@
+name: Drowning
+version: 0.0.1
+main: com.calverin.drowning.Drowning
+description: A plugin for different drowning
+author: Calverin
+website: https://calverin.com
+api-version: '1.20'

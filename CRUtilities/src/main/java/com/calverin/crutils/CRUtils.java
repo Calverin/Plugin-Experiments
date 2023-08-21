@@ -20,7 +20,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
 import com.calverin.crutils.Commands.CommandDND;
-import com.calverin.crutils.Commands.CommandMimic;
+//import com.calverin.crutils.Commands.CommandMimic;
 import com.calverin.crutils.Commands.CommandName;
 import com.calverin.crutils.Commands.CommandSee;
 import com.calverin.crutils.Commands.CommandStacking;
@@ -40,7 +40,7 @@ public class CRUtils extends JavaPlugin implements Listener {
         this.getCommand("dnd").setExecutor(new CommandDND(doNotDisturb));
         this.getCommand("stacking").setExecutor(new CommandStacking());
         this.getCommand("name").setExecutor(new CommandName());
-        this.getCommand("mimic").setExecutor(new CommandMimic());
+        //this.getCommand("mimic").setExecutor(new CommandMimic()); Too much mischief
     }
 
     @Override
