@@ -1,0 +1,12 @@
+name: SheetsToStorage
+version: 0.0.1
+main: com.calverin.sheetsToStorage.SheetsToStorage
+description: Update command storage with data from Google Sheets
+author: Calverin
+website: https://calverin.com
+api-version: '1.20'
+commands:
+   sheets:
+      description: Update command storage with data from Google Sheets
+      usage: /sheets [help|reload|url]
+      permission: sheetsToStorage.yourcommandpermission
