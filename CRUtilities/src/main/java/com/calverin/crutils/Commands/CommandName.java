@@ -17,7 +17,6 @@ public class CommandName implements CommandExecutor {
                 name += arg + " ";
             }
             meta.setDisplayName(name);
-            meta.setLocalizedName(name);
             ((Player)sender).getInventory().getItemInMainHand().setItemMeta(meta);
             sender.sendMessage("§aName changed to " + name + "!");
             return true;

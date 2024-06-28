@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -20,7 +21,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
 import com.calverin.crutils.Commands.CommandDND;
-//import com.calverin.crutils.Commands.CommandMimic;
 import com.calverin.crutils.Commands.CommandName;
 import com.calverin.crutils.Commands.CommandSee;
 import com.calverin.crutils.Commands.CommandStacking;
@@ -103,6 +103,7 @@ public class CRUtils extends JavaPlugin implements Listener {
         event.setMessage(msg);
     }
 
+    /* Stacking
     @EventHandler
     public void onPlayerRightClickEntity(PlayerInteractEntityEvent event) {
         // Player/entity stacking
@@ -133,23 +134,13 @@ public class CRUtils extends JavaPlugin implements Listener {
         }
        
     }
+    */
 
     @EventHandler
     public void onPlayerRightClick(final PlayerInteractEvent event) throws InterruptedException {
-        final Player player = event.getPlayer();
-        //// Player/entity throwing
-        //if (player.getPassengers().size() > 0 && event.getMaterial() == Material.AIR) {
-            //    final Entity passenger = player.getPassengers().get(0);
-            //    Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable(){
-                //        public void run(){
-                    //            passenger.setVelocity(player.getEyeLocation().getDirection().multiply(1.5));
-                    //        }
-                    //    }, 2L);
-        //    player.removePassenger(passenger);
-        //}
-        
+        final Player player = event.getPlayer();  
         // Glider
-        if (event.getHand() == EquipmentSlot.HAND && event.getMaterial() == Material.PHANTOM_MEMBRANE) {
+        if (event.getHand() == EquipmentSlot.HAND && event.getMaterial() == Material.PHANTOM_MEMBRANE && player.getGameMode() == GameMode.CREATIVE) {
             // Make them wear an elytra and fly
             ItemStack original = new ItemStack(Material.AIR);
             if (player.getInventory().getChestplate() != null) {

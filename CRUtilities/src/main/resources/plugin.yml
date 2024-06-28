@@ -1,5 +1,5 @@
 name: CRUtilities
-version: 0.0.1
+version: 0.0.2
 main: com.calverin.crutils.CRUtils
 description: A plugin with utlity stuff for Command Realm
 author: Calverin
@@ -26,7 +26,3 @@ commands:
       description: Sets the name of the item in the player's hand
       usage: /name <name>
       permission: crutils.yourcommandpermission
-#   mimic:
-#      description: Mimics the name of another player
-#      usage: /mimic <player>
-#      permission: crutils.yourcommandpermission
