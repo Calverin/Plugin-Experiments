@@ -16,12 +16,14 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.scheduler.BukkitTask;
 
 import com.calverin.sheetsToStorage.Storage;
 
 public class CommandSheetsToStorage implements CommandExecutor, TabCompleter {
 
     private static List<Storage> storages = new ArrayList<>();
+    private static BukkitTask scheduledTask;
 
     // This method is called, when somebody uses our command
     @Override
@@ -34,6 +36,7 @@ public class CommandSheetsToStorage implements CommandExecutor, TabCompleter {
                         "/sheets add <storage> <url> - §7Starts tracking a new Google Sheet cell and stores it in the specified storage");
                 sender.sendMessage(
                         "/sheets remove <storage> - §7Stops tracking the specified storage's Google Sheet cell");
+                sender.sendMessage("/sheets schedule <stop|seconds> - §7Sets an update interval for the storages");
                 sender.sendMessage("/sheets list - §7Lists all the storages being tracked");
                 sender.sendMessage("/sheets help - §7Displays this message");
                 return true;
@@ -42,7 +45,9 @@ public class CommandSheetsToStorage implements CommandExecutor, TabCompleter {
             case "remove":
                 return removeStorage(sender, args);
             case "reload":
-                return reload(sender);
+                return reload(sender, false);
+            case "schedule":
+                return schedule(sender, args);
             case "list":
                 sender.sendMessage("§aStorages being tracked:");
                 for (Storage storage : storages) {
@@ -89,7 +94,7 @@ public class CommandSheetsToStorage implements CommandExecutor, TabCompleter {
         Storage storage = new Storage(url, args[1], x, y);
         storages.add(storage);
         sender.sendMessage("§aAdded storage §6" + args[1] + " §atracking Google Sheet cell §6(" + x + ", " + y + ")");
-        storage.setLastValue(reloadStorage(sender, url, args[1], x, y));
+        storage.setLastValue(reloadStorage(sender, url, args[1], x, y, ""));
         return true;
     }
 
@@ -109,16 +114,17 @@ public class CommandSheetsToStorage implements CommandExecutor, TabCompleter {
         return true;
     }
 
-    private boolean reload(CommandSender sender) {
+    private boolean reload(CommandSender sender, boolean hidden) {
         for (Storage storage : storages) {
-            String data = reloadStorage(sender, storage.getUrl(), storage.getStorage(), storage.getX(), storage.getY());
+            String data = reloadStorage(sender, storage.getUrl(), storage.getStorage(), storage.getX(), storage.getY(), storage.getLastValue());
             storage.setLastValue(data);
         }
-        sender.sendMessage("§aReloaded!");
+        if (!hidden)
+            sender.sendMessage("§aReloaded!");
         return true;
     }
 
-    private String reloadStorage(CommandSender sender, URL url, String storage, int x, int y) {
+    private String reloadStorage(CommandSender sender, URL url, String storage, int x, int y, String lastValue) {
         if (url == null)
             sender.sendMessage("§cURL not set");
         if (storage == null)
@@ -131,12 +137,17 @@ public class CommandSheetsToStorage implements CommandExecutor, TabCompleter {
             sender.sendMessage("§cFailed to fetch data");
         }
 
-        System.out.println("DATA:" + data);
-
         // Remove extra quotes from the data
         if (data.startsWith("\"") && data.endsWith("\""))
-            data = data.substring(1, data.length() - 1);
+        data = data.substring(1, data.length() - 1);
         data = data.replaceAll("\"\"", "\"");
+        // Needed to replaces commas with |s in the sheet so the data wouldn't get split up when the table is parsed
+        data = data.replaceAll("\\|", ",");
+        
+        if (data.equals(lastValue))
+            return data;
+        
+        //System.out.println(url.toString() + " returned: " + data);
 
         // Validate the data
         if (data.isEmpty())
@@ -146,7 +157,6 @@ public class CommandSheetsToStorage implements CommandExecutor, TabCompleter {
 
         // Run the data commands
         ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
-        Bukkit.dispatchCommand(console, "data remove storage " + storage + " {}");
         Bukkit.dispatchCommand(console, "data merge storage " + storage + " " + data);
 
         // Update storage
@@ -186,6 +196,38 @@ public class CommandSheetsToStorage implements CommandExecutor, TabCompleter {
         return table[y][x]; // Get the data from cell (x, y)
     }
 
+    private boolean schedule(CommandSender sender, String[] args) {
+        if (args.length != 2) {
+            sender.sendMessage("§cUsage: /sheets schedule <stop|seconds>");
+            return true;
+        }
+        if (scheduledTask != null) {
+            Bukkit.getScheduler().cancelTask(scheduledTask.getTaskId());
+            if (args[1].equals("stop")) {
+                sender.sendMessage("§aStopped reload schedule");
+                return true;
+            }
+        }
+        int seconds;
+        try {
+            seconds = Integer.parseInt(args[1]);
+        } catch (NumberFormatException e) {
+            sender.sendMessage("§cInvalid number of seconds");
+            return true;
+        }
+        Runnable task = new Runnable() {
+            public void run() {
+                ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
+                reload(console, true);
+                // Load the new player data
+                Bukkit.dispatchCommand(console, "execute as @a[scores={game_state=1..}] run function cc2:admin/play_last");
+            }
+        };
+        scheduledTask = Bukkit.getScheduler().runTaskTimer(Bukkit.getPluginManager().getPlugin("SheetsToStorage"), task, 0, seconds * 20);
+        sender.sendMessage("§aScheduled to reload every " + seconds + " seconds");
+        return true;
+    }
+
     @Override
     public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
         List<String> list = new ArrayList<>();
@@ -195,6 +237,7 @@ public class CommandSheetsToStorage implements CommandExecutor, TabCompleter {
                 list.add("list");
                 list.add("add");
                 list.add("remove");
+                list.add("schedule");
                 list.add("help");
                 break;
             case 2:
@@ -206,6 +249,11 @@ public class CommandSheetsToStorage implements CommandExecutor, TabCompleter {
                         for (Storage storage : storages) {
                             list.add(storage.getStorage());
                         }
+                        break;
+                    case "schedule":
+                        if (scheduledTask != null)
+                            list.add("stop");
+                        list.add("<seconds>");
                         break;
                 }
                 break;
