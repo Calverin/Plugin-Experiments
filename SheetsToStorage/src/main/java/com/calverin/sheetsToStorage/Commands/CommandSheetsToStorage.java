@@ -115,12 +115,18 @@ public class CommandSheetsToStorage implements CommandExecutor, TabCompleter {
     }
 
     private boolean reload(CommandSender sender, boolean hidden) {
+        boolean changed = false;
         for (Storage storage : storages) {
             String data = reloadStorage(sender, storage.getUrl(), storage.getStorage(), storage.getX(), storage.getY(), storage.getLastValue());
+            if (!data.equals(storage.getLastValue()))
+                changed = true;
             storage.setLastValue(data);
         }
         if (!hidden)
             sender.sendMessage("§aReloaded!");
+        // Load the new player data
+        if (changed)
+            Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), "execute as @a[scores={game_state=1..}] run function cc2:admin/play_last");
         return true;
     }
 
@@ -217,10 +223,7 @@ public class CommandSheetsToStorage implements CommandExecutor, TabCompleter {
         }
         Runnable task = new Runnable() {
             public void run() {
-                ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
-                reload(console, true);
-                // Load the new player data
-                Bukkit.dispatchCommand(console, "execute as @a[scores={game_state=1..}] run function cc2:admin/play_last");
+                reload(Bukkit.getServer().getConsoleSender(), true);
             }
         };
         scheduledTask = Bukkit.getScheduler().runTaskTimer(Bukkit.getPluginManager().getPlugin("SheetsToStorage"), task, 0, seconds * 20);
